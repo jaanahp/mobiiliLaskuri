@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -22,10 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobiilibmilaskuri.ui.theme.MobiiliBMIlaskuriTheme
+import java.lang.Double.parseDouble
 import kotlin.math.pow
 
 class MainActivity : ComponentActivity() {
@@ -52,12 +55,37 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     var bmi by remember { mutableStateOf("")}
     var buttonEnabled by remember { mutableStateOf(false)}
 
+    //virh
+
     fun calculateBmi() {
-        val heightDouble = height.toDouble()
-        val weightDouble = weight.toDouble()
-        bmi = if (height != "" && weight != "") {
-            ((1.3 * weightDouble) / ((heightDouble / 100).pow(2.5))).toString()
-        } else "Arvo ei voi olla tyhjä"
+        bmi =   if (height != "" && weight != "") {
+                var numeric = true
+                var heightDouble = 0.00
+                var weightDouble = 0.00
+
+                height = height.replace(',', '.')
+                weight = weight.replace(',', '.')
+
+                    try {
+                        heightDouble = parseDouble(height)
+                        weightDouble = parseDouble(weight)
+                    } catch (e: NumberFormatException) {
+                        numeric = false
+                    }
+
+                    if (!numeric) {
+                        "Syötä vain lukuja"
+                    } else {
+                        if (heightDouble > 0.00 && weightDouble > 0.00) {
+                            ((1.3 * weightDouble) / ((heightDouble / 100).pow(2.5))).toString()
+                        } else {
+                            "Syöte ei voi olla nolla"
+                        }
+                    }
+
+                } else {
+                    "Syötä pituus ja paino"
+                }
     }
 
     Column(
@@ -70,13 +98,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = {height = it},
             modifier = Modifier.padding(top = 8.dp),
             textStyle = TextStyle.Default.copy(fontSize = 28.sp),
-            label = { Text("Pituus (cm)")})
+            label = { Text("Pituus (cm)")},
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        )
         TextField(
             value = weight,
             onValueChange = {weight = it},
             modifier = Modifier.padding(top = 8.dp),
             textStyle = TextStyle.Default.copy(fontSize = 28.sp),
-            label = { Text("Paino (kg)")})
+            label = { Text("Paino (kg)")},
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
         Text(
             text = bmi,
             modifier = Modifier.padding(top = 8.dp),
