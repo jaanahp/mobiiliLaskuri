@@ -55,36 +55,29 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     var bmi by remember { mutableStateOf("")}
     var buttonEnabled by remember { mutableStateOf(false)}
 
-    //virh
-
     fun calculateBmi() {
-        bmi =   if (height != "" && weight != "") {
-                var numeric = true
-                var heightDouble = 0.00
-                var weightDouble = 0.00
+        var numeric = true
+        var heightDouble = 0.00
+        var weightDouble = 0.00
 
-                height = height.replace(',', '.')
-                weight = weight.replace(',', '.')
+        height = height.replace(',', '.')
+        weight = weight.replace(',', '.')
 
-                    try {
-                        heightDouble = parseDouble(height)
-                        weightDouble = parseDouble(weight)
-                    } catch (e: NumberFormatException) {
-                        numeric = false
-                    }
+        try {
+            heightDouble = parseDouble(height)
+            weightDouble = parseDouble(weight)
+        } catch (e: NumberFormatException) {
+            numeric = false
+        }
 
-                    if (!numeric) {
-                        "Syötä vain lukuja"
-                    } else {
-                        if (heightDouble > 0.00 && weightDouble > 0.00) {
-                            ((1.3 * weightDouble) / ((heightDouble / 100).pow(2.5))).toString()
-                        } else {
-                            "Syöte ei voi olla nolla"
-                        }
-                    }
-
+        bmi =   if (!numeric) {
+                    "Tarkista syötetyt tiedot"
                 } else {
-                    "Syötä pituus ja paino"
+                    if (heightDouble > 0.00 && weightDouble > 0.00) {
+                        ((1.3 * weightDouble) / ((heightDouble / 100).pow(2.5))).toString()
+                    } else {
+                        "Syöte ei voi olla nolla"
+                    }
                 }
     }
 
@@ -93,10 +86,15 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "BMI-laskuri",
+            modifier = Modifier.padding(top = 8.dp),
+            fontSize = 26.sp
+        )
         TextField(
             value = height,
             onValueChange = {height = it},
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 16.dp),
             textStyle = TextStyle.Default.copy(fontSize = 28.sp),
             label = { Text("Pituus (cm)")},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
@@ -116,12 +114,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Row {
         Checkbox(
             checked = buttonEnabled,
-            onCheckedChange = {buttonEnabled = it},
-            modifier = Modifier.padding(top = 8.dp),
+            onCheckedChange = {buttonEnabled = it}
             )
             Text(
                 text = "Olen aikuinen",
-                modifier = Modifier.padding(9.dp))
+                modifier = Modifier.padding(top = 12.dp))
         }
 
         Button(
